@@ -9,27 +9,13 @@ export const actions = {
 			return fail(400, { error: true, message: 'No file uploaded' })
 		}
 
-		const res = await fetch('http://localhost:8080/query', {
+		const res = await fetch('http://localhost:8080/upload', {
 			method: 'POST',
-			headers: {
-				'content-type': 'application-json',
-			},
-			body: JSON.stringify({
-				query: `
-				query CreateActivity {
-					createActivity(input: {
-						name: "HI",
-						upload: {
-							file: ${file},
-							fileName: ${file.name},
-							fileSize: ${file.fileSize}
-						},
-
-					})
-				}
-				`,
-			}),
+			body: formData,
 		})
-		console.log(res)
+
+		const ok = res.ok
+
+		if (ok) return 'ok'
 	},
 }
