@@ -9,13 +9,21 @@ export const actions = {
 			return fail(400, { error: true, message: 'No file uploaded' })
 		}
 
-		const res = await fetch('http://localhost:8080/upload', {
+		const form = new FormData()
+		form.append(
+			'operations',
+			'{ "query": "mutation createActivity($file: Upload!) { createActivity(input: { file: $file }) }", "variables": { "file": null } }'
+		)
+		form.append('map', '{ "0": ["variables.file"] }')
+		form.append('0', file)
+
+		const res = await fetch('http://localhost:8080/query', {
 			method: 'POST',
-			body: formData,
+			body: form,
 		})
 
-		const ok = res.ok
-
-		if (ok) return 'ok'
+		const json = await res.json()
+		console.log(res)
+		console.log('json', json)
 	},
 }
