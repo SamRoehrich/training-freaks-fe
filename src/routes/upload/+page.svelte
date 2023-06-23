@@ -1,3 +1,7 @@
+<script>
+    export let form;
+</script>
+
 <h1>Upload your GPX file below</h1>
 
 
@@ -6,3 +10,7 @@
     
     <button type="submit">Upload</button>
 </form>
+
+{#if form?.id}
+    <p>Successfully uploaded event, id {form?.id}</p>
+{/if}

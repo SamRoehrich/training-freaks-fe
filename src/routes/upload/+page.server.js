@@ -1,18 +1,18 @@
-import { fail } from '@sveltejs/kit'
+import { fail, redirect } from '@sveltejs/kit'
 
 export const actions = {
 	default: async (event) => {
 		const formData = await event.request.formData()
 		const file = formData.get('file')
 
-		if (!file || !file.name) {
+		if (!file) {
 			return fail(400, { error: true, message: 'No file uploaded' })
 		}
 
 		const form = new FormData()
 		form.append(
 			'operations',
-			'{ "query": "mutation createActivity($file: Upload!) { createActivity(input: { file: $file }) }", "variables": { "file": null } }'
+			'{ "query": "mutation createActivity($file: Upload!) { createActivity(input: { file: $file }) { id } }", "variables": { "file": null } }'
 		)
 		form.append('map', '{ "0": ["variables.file"] }')
 		form.append('0', file)
@@ -23,7 +23,14 @@ export const actions = {
 		})
 
 		const json = await res.json()
-		console.log(res)
-		console.log('json', json)
+		const id = json.data.createActivity.id
+
+		if (id) {
+			throw redirect(303, `/activity/${id}`)
+		}
+
+		return {
+			id,
+		}
 	},
 }
